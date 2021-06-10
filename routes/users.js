@@ -57,4 +57,37 @@ router.post("/", async (req, res) => {
     }
 });
 
+//put -- update a user's credentials
+router.put("/:userId", auth, async (req, res) => {
+    try {
+      const user = await User.findById(req.params.userId);
+      if (!user) return res.status(400).send(`The user id "${req.params.userId}" does not exist.`);
+  
+      if (req.body.firstName != null) {
+        user.firstName = req.body.firstName;
+      }
+      if (req.body.lastName != null) {
+        user.lastName = req.body.lastName;
+      }
+  
+      await user.save();
+      return res.send(user);
+    } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+});
+
+//delete user
+router.delete("/:id", async (req, res) => {
+    try {
+      const user = await User.findByIdAndRemove(req.params.id);
+  
+      if (!user) return res.status(400).send(`The user id "${req.params.id}" does not exist.`);
+  
+      return res.send(user);
+    } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+  });
+
 module.exports = router;
