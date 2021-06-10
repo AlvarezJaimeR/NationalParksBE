@@ -38,4 +38,20 @@ router.post("/:id/post", async (req, res) => {
     }
 });
 
+// delete a post
+router.put("/:userId/:postId", auth, async (req, res) => {
+    try {
+      const user = await User.findByIdAndUpdate(req.params.userId);
+      if (!user) return res.status(400).send(`The user id "${req.params.userId}" does not exist.`);
+  
+      const filteredPosts = user.posts.filter((post) => post._id != req.params.postId);
+      user.posts = filteredPosts;
+  
+      await user.save();
+      return res.send(user);
+    } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+});
+
 module.exports = router;
