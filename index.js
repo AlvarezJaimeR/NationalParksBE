@@ -11,7 +11,7 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 app.use("/api/users", users);
-//app.use("/api/posts", posts);
+app.use("/api/posts", posts);
 app.use("/api/auth", auth);
 
 const port = process.env.PORT || 5000;
