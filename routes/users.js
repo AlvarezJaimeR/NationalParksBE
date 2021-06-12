@@ -40,6 +40,7 @@ router.post("/", async (req, res) => {
         lastName: req.body.lastName,
         email: req.body.email,
         password: await bcrypt.hash(req.body.password, salt),
+        icon: req.body.icon
       });
   
       await user.save();
