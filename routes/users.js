@@ -106,10 +106,12 @@ router.put("/:userId/visited", auth, async (req, res) => {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(400).send(`The user id "${req.params.userId}" does not exist.`);
 
+        console.log(req.body);
         const park = new Park({
             text: req.body.text
           });
-      
+        console.log(park);
+
         user.visitedParks.push(park);
 
         await user.save();
