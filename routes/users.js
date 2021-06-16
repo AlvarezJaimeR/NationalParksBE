@@ -2,6 +2,7 @@ const { User, validateUser } = require("../models/user");
 const bcrypt = require("bcrypt");
 const auth = require("../middleware/auth");
 const express = require("express");
+const { Park } = require("../models/park");
 const router = express.Router();
 
 //get all users
@@ -77,6 +78,46 @@ router.put("/:userId", auth, async (req, res) => {
       return res.status(500).send(`Internal Server Error: ${ex}`);
     }
 });
+
+//add wishlist parks
+router.put("/:userId/wishlist", auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId);
+        if (!user) return res.status(400).send(`The user id "${req.params.userId}" does not exist.`);
+
+        console.log(req.body);
+        const park = new Park({
+            text: req.body.text
+          });
+        console.log(park);
+
+        user.wishListParks.push(park);
+
+        await user.save();
+        return res.send(user);
+    }   catch (ex) {
+        return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+})
+
+//add visited parks
+router.put("/:userId/visited", auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId);
+        if (!user) return res.status(400).send(`The user id "${req.params.userId}" does not exist.`);
+
+        const park = new Park({
+            text: req.body.text
+          });
+      
+        user.visitedParks.push(park);
+
+        await user.save();
+        return res.send(user);
+    }   catch (ex) {
+        return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+})
 
 //delete user
 router.delete("/:id", async (req, res) => {
