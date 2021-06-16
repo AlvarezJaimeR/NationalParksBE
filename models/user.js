@@ -3,6 +3,7 @@ const Joi = require("joi");
 const config = require("config");
 const jwt = require("jsonwebtoken");
 const { Post } = require("./post");
+const { Park } = require("./park");
 
 const userSchema = new mongoose.Schema({
     email: { type: String, require: true, minlength: 2, maxlength: 255 },
@@ -10,7 +11,9 @@ const userSchema = new mongoose.Schema({
     firstName: { type: String, require: true, minlength: 2, maxlength: 50 },
     lastName: { type: String, require: true, minlength: 2, maxlength: 50 },
     posts: [Post.schema],
-    icon: {type: String}
+    icon: {type: String},
+    wishListParks: [Park.schema],
+    visitedParks: [Park.schema]
 });
 
 userSchema.methods.generateAuthToken = function () {
@@ -20,7 +23,9 @@ userSchema.methods.generateAuthToken = function () {
         firstName: this.firstName,
         lastName: this.lastName,
         posts: this.posts,
-        icon: this.icon
+        icon: this.icon,
+        wishListParks: this.wishListParks,
+        visitedParks: this.visitedParks
       },
       config.get("jwtSecret")
     );

@@ -22,11 +22,13 @@ router.post("/:id/post", async (req, res) => {
       const user = await User.findById(req.params.id);
       if (!user) return res.status(400).send(`The user id "${req.params.id}" does not exist.`);
   
-      const { error } = validatePost(req.body);
-      if (error) return res.status(400).send(error);
+      console.log(req.body);
+/*       const { error } = validatePost(req.body);
+      if (error) return res.status(400).send(error);   */
   
       const post = new Post({
-        text: req.body.text
+        text: req.body.text,
+        parkName: req.body.parkName
       });
   
       user.posts.push(post);
