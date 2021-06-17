@@ -100,6 +100,36 @@ router.put("/:userId/wishlist", auth, async (req, res) => {
     }
 })
 
+//get all wishlist parks
+router.get("/:id/wishParks", async (req, res) => {
+    try {
+      const user = await User.findById(req.params.id);
+      if (!user) return res.status(400).send(`The user id ${req.params.id} does not exist.`);
+  
+      return res.send(user.wishListParks);
+    } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+});
+
+//remove wishlist park
+router.put("/:userId/:wishId", auth, async (req, res) => {
+    try {
+        const user = await User.findByIdAndUpdate(req.params.userId);
+        if (!user) return res.status(400).send(`The user id "${req.params.userId}" does not exist.`);
+
+        const filteredWish = user.wishListParks.filter((park) => park.text != req.params.wishId);
+        user.wishListParks = filteredWish;
+        console.log(filteredWish);
+        console.log('wishlist parks', user.wishListParks);
+
+        await user.save();
+        return res.send(user);
+    }   catch (ex) {
+        return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+})
+
 //add visited parks
 router.put("/:userId/visited", auth, async (req, res) => {
     try {
