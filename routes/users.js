@@ -85,6 +85,7 @@ router.put("/:userId/wishlist", auth, async (req, res) => {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(400).send(`The user id "${req.params.userId}" does not exist.`);
 
+        console.log("wishlist section");
         console.log(req.body);
         const park = new Park({
             text: req.body.text
@@ -98,7 +99,34 @@ router.put("/:userId/wishlist", auth, async (req, res) => {
     }   catch (ex) {
         return res.status(500).send(`Internal Server Error: ${ex}`);
     }
-})
+});
+
+//add visited parks
+router.put("/:userId/visited", auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId);
+        if (!user) return res.status(400).send(`The user id "${req.params.userId}" does not exist.`);
+
+        console.log("visited park section");
+        console.log("visit park req", req.body);
+        const visitPark = new Park({
+            text: req.body.text
+          });
+        console.log("visited park", visitPark);
+
+        const filterWishPark = user.wishListParks.filter((park) => park.text != req.params.visitText);
+        user.wishListParks = filterWishPark;
+        console.log(filterWishPark);
+        console.log('wishlist parks', user.wishListParks);
+
+        user.visitedParks.push(visitPark);
+
+        await user.save();
+        return res.send(user);
+    }   catch (ex) {
+        return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+});
 
 //get all wishlist parks
 router.get("/:id/wishParks", async (req, res) => {
@@ -113,43 +141,40 @@ router.get("/:id/wishParks", async (req, res) => {
 });
 
 //remove wishlist park
-router.put("/:userId/:wishId", auth, async (req, res) => {
+router.put("/:userId/:wishText", auth, async (req, res) => {
     try {
         const user = await User.findByIdAndUpdate(req.params.userId);
         if (!user) return res.status(400).send(`The user id "${req.params.userId}" does not exist.`);
 
-        const filteredWish = user.wishListParks.filter((park) => park.text != req.params.wishId);
+        const filteredWish = user.wishListParks.filter((park) => park.text != req.params.wishText);
         user.wishListParks = filteredWish;
-        console.log(filteredWish);
-        console.log('wishlist parks', user.wishListParks);
+        //console.log(filteredWish);
+        //console.log('wishlist parks', user.wishListParks);
 
         await user.save();
         return res.send(user);
     }   catch (ex) {
         return res.status(500).send(`Internal Server Error: ${ex}`);
     }
-})
+});
 
-//add visited parks
-router.put("/:userId/visited", auth, async (req, res) => {
+//remove visited park
+router.put("/:userId/:visitText/visit", auth, async (req, res) => {
     try {
-        const user = await User.findById(req.params.userId);
+        const user = await User.findByIdAndUpdate(req.params.userId);
         if (!user) return res.status(400).send(`The user id "${req.params.userId}" does not exist.`);
 
-        console.log(req.body);
-        const park = new Park({
-            text: req.body.text
-          });
-        console.log(park);
+        const filteredVisit = user.visitedParks.filter((park) => park.text != req.params.visitText);
+        user.visitedParks = filteredVisit;
+        console.log(filteredVisit);
+        console.log('visited parks', user.visitedParks);
 
-        user.visitedParks.push(park);
-
-        await user.save();
+        await user.save(); 
         return res.send(user);
     }   catch (ex) {
         return res.status(500).send(`Internal Server Error: ${ex}`);
     }
-})
+});
 
 //delete user
 router.delete("/:id", async (req, res) => {
