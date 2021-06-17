@@ -102,7 +102,7 @@ router.put("/:userId/wishlist", auth, async (req, res) => {
 });
 
 //add visited parks
-router.put("/:userId/visited", auth, async (req, res) => {
+router.put("/:userId/visited/:visitText", auth, async (req, res) => {
     try {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(400).send(`The user id "${req.params.userId}" does not exist.`);
@@ -114,7 +114,7 @@ router.put("/:userId/visited", auth, async (req, res) => {
           });
         console.log("visited park", visitPark);
 
-        const filterWishPark = user.wishListParks.filter((park) => park.text != req.params.visitText);
+        const filterWishPark = user.wishListParks.filter((park) => park.text !== req.params.visitText);
         user.wishListParks = filterWishPark;
         console.log(filterWishPark);
         console.log('wishlist parks', user.wishListParks);
