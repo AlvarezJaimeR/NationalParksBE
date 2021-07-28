@@ -22,7 +22,6 @@ router.post("/:id/post", async (req, res) => {
       const user = await User.findById(req.params.id);
       if (!user) return res.status(400).send(`The user id "${req.params.id}" does not exist.`);
   
-      console.log(req.body);
       const { error } = validatePost(req.body);
       if (error) return res.status(400).send(error);  
   
@@ -47,22 +46,15 @@ router.put("/:userId/edit/:postId", auth, async (req, res) => {
       const user = await User.findById(req.params.userId);
       if (!user) return res.status(400).send(`The user id "${req.params.userId}" does not exist.`);
       
-      console.log(user);
-
-      console.log(req.body);
-
       const { error } = validatePost(req.body);
       if (error) return res.status(400).send(error);
 
       const keepPosts = user.posts.filter((post) => post._id != req.params.postId);
       const filteredPosts = user.posts.filter((post) => post._id == req.params.postId);
       
-      console.log('filterdPost-pre',filteredPosts);
       filteredPosts[0].text = req.body.text
-      console.log('filterdPost-post',filteredPosts);
 
       Array.prototype.push.apply(keepPosts, filteredPosts);
-      console.log(keepPosts);
       user.posts = keepPosts;
 
       await user.save();

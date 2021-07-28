@@ -85,12 +85,9 @@ router.put("/:userId/wishlist", auth, async (req, res) => {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(400).send(`The user id "${req.params.userId}" does not exist.`);
 
-        console.log("wishlist section");
-        console.log(req.body);
         const park = new Park({
             text: req.body.text
           });
-        console.log(park);
 
         user.wishListParks.push(park);
 
@@ -107,17 +104,12 @@ router.put("/:userId/visited/:visitText", auth, async (req, res) => {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(400).send(`The user id "${req.params.userId}" does not exist.`);
 
-        console.log("visited park section");
-        console.log("visit park req", req.body);
         const visitPark = new Park({
             text: req.body.text
           });
-        console.log("visited park", visitPark);
 
         const filterWishPark = user.wishListParks.filter((park) => park.text !== req.params.visitText);
         user.wishListParks = filterWishPark;
-        console.log(filterWishPark);
-        console.log('wishlist parks', user.wishListParks);
 
         user.visitedParks.push(visitPark);
 
@@ -148,8 +140,6 @@ router.put("/:userId/:wishText", auth, async (req, res) => {
 
         const filteredWish = user.wishListParks.filter((park) => park.text != req.params.wishText);
         user.wishListParks = filteredWish;
-        //console.log(filteredWish);
-        //console.log('wishlist parks', user.wishListParks);
 
         await user.save();
         return res.send(user);
@@ -166,8 +156,6 @@ router.put("/:userId/:visitText/visit", auth, async (req, res) => {
 
         const filteredVisit = user.visitedParks.filter((park) => park.text != req.params.visitText);
         user.visitedParks = filteredVisit;
-        console.log(filteredVisit);
-        console.log('visited parks', user.visitedParks);
 
         await user.save(); 
         return res.send(user);
