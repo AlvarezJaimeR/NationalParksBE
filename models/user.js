@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const { Post } = require("./post");
 const { Park } = require("./park");
 
+var jwtSecret = process.env.JWT_SECRET;
+
 const userSchema = new mongoose.Schema({
     email: { type: String, require: true, minlength: 2, maxlength: 255 },
     password: { type: String, require: true, minlength: 3, maxlength: 1024 },
@@ -27,7 +29,7 @@ userSchema.methods.generateAuthToken = function () {
         wishListParks: this.wishListParks,
         visitedParks: this.visitedParks
       },
-      config.get("jwtSecret")
+      jwtSecret || config.get("jwtSecret")
     );
   };
   
